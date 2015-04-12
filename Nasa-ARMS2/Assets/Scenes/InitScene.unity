@@ -183,7 +183,7 @@ GUIText:
   m_GameObject: {fileID: 1942926938}
   m_Enabled: 1
   serializedVersion: 3
-  m_Text: LOADING
+  m_Text: LOADING...
   m_Anchor: 4
   m_Alignment: 0
   m_PixelOffset: {x: 0, y: 0}
