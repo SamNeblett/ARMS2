@@ -23,6 +23,8 @@ public class TouchController : MonoBehaviour {
 
 	public float ResourcesXPos, TasksXPos, DiagramsXPos = 0.0f;
 
+	public GUIText LeftSection, CurrentSection, RightSection;
+
 	void Start () 
 	{
 		if(Application.isEditor)
@@ -53,74 +55,123 @@ public class TouchController : MonoBehaviour {
 		}
 	}
 
-	void DoMoveLeft(float currentXPos, GameObject currentSection)
+	void DoMoveLeft(float currentXPos, GameObject Section)
 	{
 		if(currentXPos - 1.0f > -2.0f)
 		{
 			currentXPos -= 1.0f;
 
-			iTween.MoveTo(currentSection, iTween.Hash("x", currentXPos, "time", 0.5f, "islocal", true));
+			iTween.MoveTo(Section, iTween.Hash("x", currentXPos, "time", 0.25f, "islocal", true));
 
 		} else {
 			currentXPos = 1.0f;
 
-			currentSection.transform.localPosition = new Vector3(currentXPos, 0.0f, 0.0f);
+			Section.transform.localPosition = new Vector3(currentXPos, 0.0f, 0.0f);
 
 
 		}
 
-		if(currentSection.Equals(TaskContainer))
+		if(Section.Equals(TaskContainer))
 		{
 			TasksXPos = currentXPos;
+
+			if(Mathf.Approximately(TasksXPos, 0.0f))
+			{
+				LeftSection.text = "RESOURCES";
+				CurrentSection.text = "TASK";
+				RightSection.text = "DIAGRAMS";
+			}
 		}
 		
-		if(currentSection.Equals(ResourcesContainer))
+		if(Section.Equals(ResourcesContainer))
 		{
 			ResourcesXPos = currentXPos;
+
+			if(Mathf.Approximately(ResourcesXPos, 0.0f))
+			{
+				CurrentSection.text = "RESOURCES";
+				RightSection.text = "TASK";
+				LeftSection.text = "DIAGRAMS";
+			}
 		}
 
-		if(currentSection.Equals(DiagramsContainer))
+		if(Section.Equals(DiagramsContainer))
 		{
 			DiagramsXPos = currentXPos;
+
+			if(Mathf.Approximately(DiagramsXPos, 0.0f))
+			{
+				RightSection.text = "RESOURCES";
+				LeftSection.text = "TASK";
+				CurrentSection.text = "DIAGRAMS";
+			}
 		}
 	}
 
-	void DoMoveRight(float currentXPos, GameObject currentSection)
+	void DoMoveRight(float currentXPos, GameObject Section)
 	{
 		if(currentXPos + 1.0f < 2.0f)
 		{
 			currentXPos += 1.0f;
 			
-			iTween.MoveTo(currentSection, iTween.Hash("x", currentXPos, "time", 0.5f, "islocal", true));
+			iTween.MoveTo(Section, iTween.Hash("x", currentXPos, "time", 0.25f, "islocal", true));
 			
 		} else {
 			currentXPos = -1.0f;
 			
-			currentSection.transform.localPosition = new Vector3(currentXPos, 0.0f, 0.0f);
+			Section.transform.localPosition = new Vector3(currentXPos, 0.0f, 0.0f);
 			
 
 		}
 
-		if(currentSection.Equals(TaskContainer))
+		if(Section.Equals(TaskContainer))
 		{
 			TasksXPos = currentXPos;
+
+			if(Mathf.Approximately(TasksXPos, 0.0f))
+			{
+				LeftSection.text = "RESOURCES";
+				CurrentSection.text = "TASK";
+				RightSection.text = "DIAGRAMS";
+			}
 		}
 
-		if(currentSection.Equals(ResourcesContainer))
+		if(Section.Equals(ResourcesContainer))
 		{
 			ResourcesXPos = currentXPos;
+
+			if(Mathf.Approximately(ResourcesXPos, 0.0f))
+			{
+				CurrentSection.text = "RESOURCES";
+				RightSection.text = "TASK";
+				LeftSection.text = "DIAGRAMS";
+			}
 		}
 
-		if(currentSection.Equals(DiagramsContainer))
+		if(Section.Equals(DiagramsContainer))
 		{
 			DiagramsXPos = currentXPos;
+
+			if(Mathf.Approximately(DiagramsXPos, 0.0f))
+			{
+				RightSection.text = "RESOURCES";
+				LeftSection.text = "TASK";
+				CurrentSection.text = "DIAGRAMS";
+			}
 		}
 	}
 
+	bool TapLock = false;
+
+	int taplockDelay = 20;
+
 	void MobileUpdate()
 	{
-		if(Input.touchCount > 0)
+		if(Input.touchCount > 0 && !TapLock)
 		{
+
+			TapLock = true;
+
 			if(Input.touches[0].position.x < leftXMax)
 			{
 				DoMoveLeft(TasksXPos, TaskContainer);
@@ -130,7 +181,7 @@ public class TouchController : MonoBehaviour {
 			} else if(Input.touches[0].position.x > leftXMax && Input.touches[0].position.x < rightXMin)
 			{
 
-				//iTween.MoveTo(TaskContainer, iTween.Hash("x", 0.0f, "time", 1.0f, "islocal", true));
+
 
 			} else if(Input.touches[0].position.x > rightXMin)
 			{
@@ -138,6 +189,18 @@ public class TouchController : MonoBehaviour {
 				DoMoveRight(ResourcesXPos, ResourcesContainer);
 				DoMoveRight(DiagramsXPos, DiagramsContainer);
 			}
+		} 
+
+		if(TapLock && Input.touchCount.Equals(0))
+		{
+			if(taplockDelay - 1 > -1)
+			{
+				taplockDelay--;
+			} else {
+				TapLock = false;
+				taplockDelay = 20;
+			}
+
 		}
 	}
 
@@ -147,18 +210,22 @@ public class TouchController : MonoBehaviour {
 		{
 			if(Input.mousePosition.x < leftXMax)
 			{
+
 				Debug.Log("LEFT BUTTON PRESS!");
+
 				DoMoveLeft(TasksXPos, TaskContainer);
 				DoMoveLeft(ResourcesXPos, ResourcesContainer);
 				DoMoveLeft(DiagramsXPos, DiagramsContainer);
 
 			} else if(Input.mousePosition.x > leftXMax && Input.mousePosition.x < rightXMin)
 			{
+
 				Debug.Log("CENTER BUTTON PRESS!");
-				//iTween.MoveTo(ResourcesContainer, iTween.Hash("x", -1.0f, "time", 1.0f, "islocal", true));
-				//iTween.MoveTo(TaskContainer, iTween.Hash("x", 0.0f, "time", 1.0f, "islocal", true));
+
 			} else {
+
 				Debug.Log("RIGHT BUTTON PRESS!");
+
 				DoMoveRight(TasksXPos, TaskContainer);
 				DoMoveRight(ResourcesXPos, ResourcesContainer);
 				DoMoveRight(DiagramsXPos, DiagramsContainer);
