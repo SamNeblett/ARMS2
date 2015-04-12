@@ -25,9 +25,11 @@ public class TouchController : MonoBehaviour {
 
 	public GUIText LeftSection, CurrentSection, RightSection;
 
+	public TaskManager TM;
+
 	void Start () 
 	{
-		if(Application.isEditor)
+		if(Application.isEditor || Application.isWebPlayer)
 		{
 			isMobile = false;
 		}
@@ -57,18 +59,18 @@ public class TouchController : MonoBehaviour {
 
 	void DoMoveLeft(float currentXPos, GameObject Section)
 	{
-		if(currentXPos - 1.0f > -2.0f)
+		if(currentXPos + 1.0f < 2.0f)
 		{
-			currentXPos -= 1.0f;
-
+			currentXPos += 1.0f;
+			
 			iTween.MoveTo(Section, iTween.Hash("x", currentXPos, "time", 0.25f, "islocal", true));
-
+			
 		} else {
-			currentXPos = 1.0f;
-
+			currentXPos = -1.0f;
+			
 			Section.transform.localPosition = new Vector3(currentXPos, 0.0f, 0.0f);
-
-
+			
+			
 		}
 
 		if(Section.Equals(TaskContainer))
@@ -105,23 +107,26 @@ public class TouchController : MonoBehaviour {
 				LeftSection.text = "TASK";
 				CurrentSection.text = "DIAGRAMS";
 			}
+
 		}
 	}
 
 	void DoMoveRight(float currentXPos, GameObject Section)
 	{
-		if(currentXPos + 1.0f < 2.0f)
+
+
+		if(currentXPos - 1.0f > -2.0f)
 		{
-			currentXPos += 1.0f;
+			currentXPos -= 1.0f;
 			
 			iTween.MoveTo(Section, iTween.Hash("x", currentXPos, "time", 0.25f, "islocal", true));
 			
 		} else {
-			currentXPos = -1.0f;
+			currentXPos = 1.0f;
 			
 			Section.transform.localPosition = new Vector3(currentXPos, 0.0f, 0.0f);
 			
-
+			
 		}
 
 		if(Section.Equals(TaskContainer))
@@ -181,7 +186,7 @@ public class TouchController : MonoBehaviour {
 			} else if(Input.touches[0].position.x > leftXMax && Input.touches[0].position.x < rightXMin)
 			{
 
-
+				TM.Advance();
 
 			} else if(Input.touches[0].position.x > rightXMin)
 			{
@@ -221,6 +226,7 @@ public class TouchController : MonoBehaviour {
 			{
 
 				Debug.Log("CENTER BUTTON PRESS!");
+				TM.Advance();
 
 			} else {
 
