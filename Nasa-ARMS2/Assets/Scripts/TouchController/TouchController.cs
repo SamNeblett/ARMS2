@@ -27,9 +27,11 @@ public class TouchController : MonoBehaviour {
 
 	public TaskManager TM;
 
+	public bool isMoverio = false;
+
 	void Start () 
 	{
-		if(Application.isEditor || Application.isWebPlayer)
+		if(Application.isEditor || Application.isWebPlayer || isMoverio)
 		{
 			isMobile = false;
 		}
